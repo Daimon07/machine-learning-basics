@@ -1,21 +1,23 @@
 import pandas as pd
+import numpy as np
 import math
 
-df = pd.read_excel('default_of_credit_card_clients.xls', header = 1) # Install xlrd package due to old excel file format
-print(df.head())
+df = pd.read_csv('secom.csv', delimiter=' ', header=None, encoding='utf-8')
+df_two = pd.read_csv('secom_labels.csv', sep=r'\s+', header=None, encoding='utf-8', engine='python', skiprows=1) 
 
-# CHECKS
-
-default_payment_column = df['default payment next month']
-num_defaults = (default_payment_column == 1).sum()
-num_non_defaults = (default_payment_column == 0).sum()
-num_random = ((default_payment_column != 1) & (default_payment_column != 0)).sum() 
+print(df)
+print(df_two)
 
 
-print("Defaults: ", num_defaults)
-print("Non-Defaults: ", num_non_defaults)
-print("Random: ", num_random)
-print(df["EDUCATION"].value_counts())
-print(df["MARRIAGE"].value_counts())
-print(df["SEX"].value_counts())
-print(df.describe())
+df_two = df_two.drop(columns=df_two.columns[[1,2]])
+failed = 0
+passed = 0
+
+for i in range(0, len(df_two)):
+    if df_two.iloc[i, 0] == -1:
+        failed += 1
+    elif df_two.iloc[i, 0] == 1:
+        passed += 1
+    else:
+        None
+print(passed, failed)
