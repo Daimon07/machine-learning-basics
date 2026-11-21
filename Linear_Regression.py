@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import math
-
 from sklearn.model_selection import train_test_split
 
 
@@ -22,14 +21,17 @@ missingValues = np.isnan(x).sum(axis=0)
 maxNan = missingValues.max(axis=0)
 totalNan = missingValues.sum(axis=0)
 
-# print(shapeX) # (1567, 590)
-# print(shapeY) # (1567, 1)
-# print(missingValues) 
-# print(maxNan) # 1429
-# print(totalNan) # 41951
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.20, random_state = 42, stratify=y.ravel())
 
-X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.20, random_state = 42)
-stratify=y.ravel()
-print(X_train, X_test, y_train, y_test)
+missingFraction = np.isnan(X_train).mean(axis=0)
+keepColumns = missingFraction <= 0.5
 
-print(pd.DataFrame(X_train).iloc[:10, :10])
+X_train = X_train[:, keepColumns]
+X_test = X_test[:, keepColumns]
+
+medians = np.nanmedian(X_train, axis=0)
+X_train = np.where(np.isnan(X_train), medians, X_train)
+X_test = np.where(np.isnan(X_test), medians, X_test)
+
+print(np.isnan(X_train).sum())
+print(np.isnan(X_test).sum())
