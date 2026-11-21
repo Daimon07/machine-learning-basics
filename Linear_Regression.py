@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import math
 from sklearn.model_selection import train_test_split
 
 
@@ -25,7 +24,6 @@ X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.20, rand
 
 missingFraction = np.isnan(X_train).mean(axis=0)
 keepColumns = missingFraction <= 0.5
-
 X_train = X_train[:, keepColumns]
 X_test = X_test[:, keepColumns]
 
@@ -33,5 +31,16 @@ medians = np.nanmedian(X_train, axis=0)
 X_train = np.where(np.isnan(X_train), medians, X_train)
 X_test = np.where(np.isnan(X_test), medians, X_test)
 
-print(np.isnan(X_train).sum())
-print(np.isnan(X_test).sum())
+std = np.std(X_train, axis=0)
+keepStd = std > 0
+X_train = X_train[:, keepStd]
+X_test = X_test[:, keepStd]
+newStd = np.std(X_train, axis=0)
+
+mean = np.mean(X_train, axis=0)
+
+X_train_standardized = (X_train - mean) / newStd
+X_test_standardized = (X_test - mean) / newStd
+
+print(X_train_standardized.mean(axis=0))
+print(X_train_standardized.std(axis=0))
