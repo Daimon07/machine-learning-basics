@@ -42,5 +42,29 @@ mean = np.mean(X_train, axis=0)
 X_train_standardized = (X_train - mean) / newStd
 X_test_standardized = (X_test - mean) / newStd
 
-print(X_train_standardized.mean(axis=0))
-print(X_train_standardized.std(axis=0))
+ones_train = np.ones((X_train.shape[0], 1))
+X_train_OLS = np.concatenate((ones_train, X_train_standardized), axis=1)
+ones_test = np.ones((X_test.shape[0], 1))
+X_test_OLS = np.concatenate((ones_test, X_test_standardized), axis=1)
+
+rank = np.linalg.matrix_rank(X_train_OLS)
+beta, residuals, rank, singular_values = np.linalg.lstsq(X_train_OLS, y_train, rcond=None)
+
+y_test_ones = np.ones((y_test.shape[0], 1))
+y_train_pred = X_train_OLS @ beta 
+y_test_pred = X_test_OLS @ beta
+
+mse_train = np.sum((y_train - y_train_pred)**2) / y_train.size
+mse_test = np.sum((y_test - y_test_pred)**2) / y_test.size
+mse_test_pass = np.sum(((y_test - (-y_test_ones))**2) / y_test.size)
+
+# print(mse_train) 0.13169642451183636
+# print(mse_test) 0.5992126865798275
+# print(mse_test_pass) 0.26751592356687903
+
+max_coeff = np.max(beta)
+norm = np.linalg.norm(beta)
+
+# print(norm) 279.3841472224295
+# print(max_coeff) 172.8120168737687
+
