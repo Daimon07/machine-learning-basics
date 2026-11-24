@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
 
@@ -70,21 +71,40 @@ norm = np.linalg.norm(beta)
 
 identity_matrix = np.eye(X_train_OLS.shape[1])
 identity_matrix[0, 0] = 0
-lambda_value = 1
+lambda_values = np.logspace(-3, 12, 20)
 
-A = (np.matrix_transpose(X_train_OLS) @ X_train_OLS) + (lambda_value * identity_matrix)
-B = (np.linalg.matrix_transpose(X_train_OLS) @ y_train)
-beta_ridge = np.linalg.solve(A,B)
+mse_train_list = []
+mse_test_list = []
+norm_coeffs = []
+
+for lam in lambda_values:
+
+    A = (np.matrix_transpose(X_train_OLS) @ X_train_OLS) + (lam * identity_matrix)
+    B = (np.linalg.matrix_transpose(X_train_OLS) @ y_train)
+    beta_ridge = np.linalg.solve(A,B)
+
+    y_train_pred_ridge = X_train_OLS @ beta_ridge
+    y_test_pred_ridge = X_test_OLS @ beta_ridge
+
+    mse_train = np.sum((y_train - y_train_pred_ridge)**2) / y_train.size
+    mse_test = np.sum((y_test - y_test_pred_ridge)**2) / y_test.size
+    coeffs = np.sum((beta_ridge[1:])**2)
+
+    mse_train_list.append(mse_train)
+    mse_test_list.append(mse_test)
+    norm_coeffs.append(coeffs)
 
 
-y_train_pred_ridge = X_train_OLS @ beta_ridge
-y_test_pred_ridge = X_test_OLS @ beta_ridge
+plt.semilogx(lambda_values, mse_train_list, label="Training MSE")
+plt.semilogx(lambda_values, mse_test_list, label="Testing MSE")
 
-mse_train = np.sum((y_train - y_train_pred_ridge)**2) / y_train.size
-mse_test = np.sum((y_test - y_test_pred_ridge)**2) / y_test.size
+plt.xlabel("Lambda Values")
+plt.ylabel("Error (MSE)")
+plt.title("Ridge: Lambda variations w/ MSE")
+plt.legend()
+plt.grid(True)
 
-print(mse_train) #0.1444
-print(mse_test) #0.3003
+plt.show()
 
 
 
