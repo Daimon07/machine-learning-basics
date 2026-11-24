@@ -68,3 +68,25 @@ norm = np.linalg.norm(beta)
 # print(norm) 279.3841472224295
 # print(max_coeff) 172.8120168737687
 
+identity_matrix = np.eye(X_train_OLS.shape[1])
+identity_matrix[0, 0] = 0
+lambda_value = 1
+
+A = (np.matrix_transpose(X_train_OLS) @ X_train_OLS) + (lambda_value * identity_matrix)
+B = (np.linalg.matrix_transpose(X_train_OLS) @ y_train)
+beta_ridge = np.linalg.solve(A,B)
+
+
+y_train_pred_ridge = X_train_OLS @ beta_ridge
+y_test_pred_ridge = X_test_OLS @ beta_ridge
+
+mse_train = np.sum((y_train - y_train_pred_ridge)**2) / y_train.size
+mse_test = np.sum((y_test - y_test_pred_ridge)**2) / y_test.size
+
+print(mse_train) #0.1444
+print(mse_test) #0.3003
+
+
+
+
+
