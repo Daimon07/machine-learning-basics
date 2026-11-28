@@ -48,14 +48,12 @@ mse_test_list = []
 norm_coeffs = []
 
 for lam in lambda_values:
-
     beta_ridge = ridge(x_train, y_train, lam, identity_matrix)
 
     y_train_pred_ridge = x_train @ beta_ridge
     y_test_pred_ridge = x_test @ beta_ridge
 
-    mse_train = np.sum((y_train - y_train_pred_ridge)**2) / y_train.size
-    mse_test = np.sum((y_test - y_test_pred_ridge)**2) / y_test.size
+    mse_train, mse_test = mse(y_train_pred_ridge, y_test_pred_ridge, y_train, y_test)    
     coeffs = np.sum((beta_ridge[1:])**2)
 
     mse_train_list.append(mse_train)

@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from sklearn import linear_model
 
 def ols(x_train, y_train):
     rank = np.linalg.matrix_rank(x_train)
@@ -16,5 +17,5 @@ def ridge(x_train, y_train, lam, identity_matrix):
     return beta_ridge
 
 def lasso(x_train, y_train, lam):
-
+    linear_model()
     return;
